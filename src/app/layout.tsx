@@ -28,7 +28,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="id" suppressHydrationWarning>
-      <body className={`${inter.variable} ${dmSerif.variable} antialiased`}>
+      <body className={`${inter.variable} ${dmSerif.variable} antialiased`} suppressHydrationWarning>
         <I18nProvider>
           {children}
           <Toaster position="top-center" richColors />
