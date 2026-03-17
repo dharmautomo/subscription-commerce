@@ -71,6 +71,16 @@ async function main() {
   await Promise.all([
     prisma.frequencySetting.create({
       data: {
+        frequency: "ONE_TIME",
+        label: "One-Time",
+        description: "Single order, no recurring charge",
+        interval: "DAY",
+        intervalCount: 1,
+        enabled: true,
+      },
+    }),
+    prisma.frequencySetting.create({
+      data: {
         frequency: "DAILY",
         label: "Daily",
         description: "Fresh delivery every day",
@@ -472,7 +482,7 @@ async function main() {
 
   console.log("✅ Seed complete!");
   console.log(`   ${products.length} products`);
-  console.log(`   4 frequency settings`);
+  console.log(`   5 frequency settings`);
   console.log(`   ${customers.length} customers`);
   console.log(`   ${addresses.length} addresses`);
   console.log(`   ${orders.length} orders`);
