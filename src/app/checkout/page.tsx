@@ -11,22 +11,28 @@ import {
   Shield,
   Loader2,
   Info,
+  User,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { Header } from "@/components/layout/Header";
+import { toast } from "sonner";
 import { CustomerDetails } from "@/components/checkout/CustomerForm";
 import { DeliveryAddress } from "@/components/checkout/DeliveryAddress";
 import { OrderSummary } from "@/components/checkout/OrderSummary";
 import { useI18n } from "@/lib/i18n-context";
+import { useSession } from "next-auth/react";
 
 interface Product {
   id: string;
   name: string;
   description: string;
-  priceConfig: { basePrice: number; comparePrice: number | null } | null;
+  stock: number | null;
+  priceConfig: { basePrice: number; comparePrice: number | null; oneTimePrice?: number | null; dailyPrice?: number | null; weeklyPrice?: number | null; monthlyPrice?: number | null; yearlyPrice?: number | null } | null;
 }
 
 interface FrequencySetting {
@@ -41,6 +47,20 @@ function formatPrice(amount: number): string {
   return `Rp ${amount.toLocaleString("id-ID")}`;
 }
 
+function getPrice(priceConfig: Product["priceConfig"], orderType: string, frequency: string): number {
+  if (!priceConfig) return 0;
+  if (orderType === "ONE_TIME") {
+    return priceConfig.oneTimePrice ?? priceConfig.basePrice;
+  }
+  const frequencyMap: Record<string, keyof typeof priceConfig> = {
+    DAILY: "dailyPrice",
+    WEEKLY: "weeklyPrice",
+    MONTHLY: "monthlyPrice",
+    YEARLY: "yearlyPrice",
+  };
+  return priceConfig[frequencyMap[frequency]] ?? priceConfig.basePrice;
+}
+
 const acceptedPayments = [
   { label: "Bank Transfer", icon: Building2, desc: "BCA, BNI, Mandiri" },
   { label: "Credit / Debit Card", icon: CreditCard, desc: "Visa, Mastercard" },
@@ -51,6 +71,7 @@ function CheckoutForm() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const { t } = useI18n();
+  const { data: session, status: sessionStatus } = useSession();
   const productId = searchParams.get("product");
 
   const [product, setProduct] = useState<Product | null>(null);
@@ -71,6 +92,10 @@ function CheckoutForm() {
     deliveryNotes: "",
   });
 
+  // Guest account creation
+  const [createAccount, setCreateAccount] = useState(false);
+  const [accountPassword, setAccountPassword] = useState("");
+
   useEffect(() => {
     Promise.all([
       fetch("/api/products").then((r) => r.json()),
@@ -78,10 +103,48 @@ function CheckoutForm() {
     ]).then(([products, freqs]) => {
       const found = products.find((p: Product) => p.id === productId);
       setProduct(found || products[0]);
-      setFrequencies(freqs);
+      const enabledFreqs = freqs.filter((f: FrequencySetting) => f.enabled);
+      setFrequencies(enabledFreqs);
+      // Check if ONE_TIME is enabled, if not default to first enabled subscription frequency
+      const oneTimeEnabled = enabledFreqs.some((f: FrequencySetting) => f.frequency === "ONE_TIME");
+      if (!oneTimeEnabled && enabledFreqs.length > 0) {
+        setOrderType("SUBSCRIPTION");
+        const subFreq = enabledFreqs.find((f: FrequencySetting) => f.frequency !== "ONE_TIME");
+        if (subFreq) setFrequency(subFreq.frequency);
+      }
       setLoading(false);
     });
   }, [productId]);
+
+  // Autofill from saved profile when logged in
+  useEffect(() => {
+    if (session?.user?.id) {
+      fetch("/api/account/profile")
+        .then((r) => r.json())
+        .then((data) => {
+          if (data.profile) {
+            setForm((prev) => ({
+              ...prev,
+              name: data.profile.name || prev.name,
+              email: data.profile.email || prev.email,
+              phone: data.profile.phone || prev.phone,
+            }));
+          }
+          // Autofill most recent address
+          if (data.addresses?.length > 0) {
+            const addr = data.addresses[0];
+            setForm((prev) => ({
+              ...prev,
+              address: addr.address || prev.address,
+              city: addr.city || prev.city,
+              postalCode: addr.postalCode || prev.postalCode,
+              deliveryNotes: addr.deliveryNotes || prev.deliveryNotes,
+            }));
+          }
+        })
+        .catch(() => {});
+    }
+  }, [session?.user?.id]);
 
   const updateForm = (field: string, value: string) => {
     setForm((prev) => ({ ...prev, [field]: value }));
@@ -93,7 +156,8 @@ function CheckoutForm() {
   // Validation checks for each section
   const customerDetailsComplete = form.name && form.email && form.phone && isEmailValid && isPhoneValid;
   const deliveryDetailsComplete = form.address && form.city && form.postalCode;
-  const isFormValid = customerDetailsComplete && deliveryDetailsComplete;
+  const accountValid = !createAccount || accountPassword.length >= 8;
+  const isFormValid = customerDetailsComplete && deliveryDetailsComplete && accountValid;
 
   const handleSubmit = async () => {
     if (!product || !isFormValid) return;
@@ -113,6 +177,7 @@ function CheckoutForm() {
           orderType,
           frequency: orderType === "SUBSCRIPTION" ? frequency : undefined,
           customer: form,
+          ...(createAccount && accountPassword ? { createAccount: true, password: accountPassword } : {}),
         }),
       });
 
@@ -129,14 +194,16 @@ function CheckoutForm() {
       } else {
         router.push("/payment/success?orderId=" + data.orderId);
       }
-    } catch {
-      router.push("/payment/failed");
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "Checkout failed";
+      toast.error(message);
+      console.error("Checkout error:", error);
     } finally {
       setSubmitting(false);
     }
   };
 
-  const price = product?.priceConfig?.basePrice || 0;
+  const price = getPrice(product?.priceConfig || null, orderType, frequency);
 
   if (loading) {
     return (
@@ -145,6 +212,8 @@ function CheckoutForm() {
       </div>
     );
   }
+
+  const isLoggedIn = !!session?.user;
 
   return (
     <div className="min-h-screen bg-[var(--background)] pb-32">
@@ -177,6 +246,26 @@ function CheckoutForm() {
             </div>
           </CardContent>
         </Card>
+
+        {/* ─── Login prompt or logged-in banner ─────────────────────────── */}
+        {isLoggedIn ? (
+          <div className="flex items-center gap-2 p-3 rounded-xl bg-[var(--color-emerald-50)] border border-[var(--color-emerald-200)]">
+            <User className="h-4 w-4 text-[var(--primary)] shrink-0" />
+            <p className="text-xs text-[var(--color-emerald-800)]">
+              {t("auth.loggedInAs")} <span className="font-medium">{session.user?.name}</span>
+            </p>
+          </div>
+        ) : sessionStatus !== "loading" ? (
+          <div className="flex items-center gap-2 p-3 rounded-xl bg-[var(--color-stone-50)] border border-[var(--border)]">
+            <User className="h-4 w-4 text-[var(--muted-foreground)] shrink-0" />
+            <Link
+              href={`/login?callbackUrl=${encodeURIComponent(`/checkout?product=${productId}`)}`}
+              className="text-xs text-[var(--primary)] font-medium hover:underline"
+            >
+              {t("auth.loginToAutofill")}
+            </Link>
+          </div>
+        ) : null}
 
         {/* ─── Customer Details ──────────────────────────────────────────── */}
         {!customerDetailsComplete && (
@@ -213,22 +302,24 @@ function CheckoutForm() {
                 onValueChange={(v) => setOrderType(v as "ONE_TIME" | "SUBSCRIPTION")}
                 className="space-y-3"
               >
-                {/* One-time */}
-                <label
-                  className={`flex items-start gap-3 p-3 rounded-xl border cursor-pointer transition-all ${
-                    orderType === "ONE_TIME"
-                      ? "border-[var(--primary)] bg-[var(--color-emerald-50)]/50"
-                      : "border-[var(--border)] hover:border-[var(--color-stone-300)]"
-                  }`}
-                >
-                  <RadioGroupItem value="ONE_TIME" className="mt-0.5" />
-                  <div>
-                    <div className="font-medium text-sm">{t('checkout.oneTime')}</div>
-                    <div className="text-xs text-[var(--muted-foreground)] mt-0.5">
-                      {t('checkout.oneTimeDesc')}
+                {/* One-time - only show if enabled */}
+                {frequencies.some((f) => f.frequency === "ONE_TIME") && (
+                  <label
+                    className={`flex items-start gap-3 p-3 rounded-xl border cursor-pointer transition-all ${
+                      orderType === "ONE_TIME"
+                        ? "border-[var(--primary)] bg-[var(--color-emerald-50)]/50"
+                        : "border-[var(--border)] hover:border-[var(--color-stone-300)]"
+                    }`}
+                  >
+                    <RadioGroupItem value="ONE_TIME" className="mt-0.5" />
+                    <div>
+                      <div className="font-medium text-sm">{t('checkout.oneTime')}</div>
+                      <div className="text-xs text-[var(--muted-foreground)] mt-0.5">
+                        {t('checkout.oneTimeDesc')}
+                      </div>
                     </div>
-                  </div>
-                </label>
+                  </label>
+                )}
                 {/* Subscription */}
                 <label
                   className={`flex items-start gap-3 p-3 rounded-xl border cursor-pointer transition-all ${
@@ -291,6 +382,46 @@ function CheckoutForm() {
           frequencies={frequencies}
           formatPrice={formatPrice}
         />
+
+        {/* ─── Create Account (guest only) ─────────────────────────────── */}
+        {!isLoggedIn && sessionStatus !== "loading" && (
+          <Card>
+            <CardContent className="p-4">
+              <label className="flex items-start gap-3 cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={createAccount}
+                  onChange={(e) => {
+                    setCreateAccount(e.target.checked);
+                    if (!e.target.checked) setAccountPassword("");
+                  }}
+                  className="mt-0.5 h-4 w-4 rounded border-[var(--border)] text-[var(--primary)] accent-[var(--primary)]"
+                />
+                <div>
+                  <div className="text-sm font-medium">{t("auth.createAccountWithOrder")}</div>
+                  <div className="text-xs text-[var(--muted-foreground)] mt-0.5">
+                    {t("auth.loginToAutofill")}
+                  </div>
+                </div>
+              </label>
+              {createAccount && (
+                <div className="mt-3 space-y-1.5">
+                  <Label htmlFor="account-password">{t("auth.setPassword")}</Label>
+                  <Input
+                    id="account-password"
+                    type="password"
+                    value={accountPassword}
+                    onChange={(e) => setAccountPassword(e.target.value)}
+                    placeholder="Min. 8 characters"
+                  />
+                  {accountPassword && accountPassword.length < 8 && (
+                    <p className="text-[10px] text-red-500">{t("auth.passwordTooShort")}</p>
+                  )}
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        )}
 
         {/* ─── Payment Info ──────────────────────────────────────────────── */}
         <div>

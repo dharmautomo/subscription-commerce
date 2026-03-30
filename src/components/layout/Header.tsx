@@ -1,10 +1,12 @@
 'use client';
 
 import Link from "next/link";
-import { Leaf, ChevronLeft } from "lucide-react";
+import { Leaf, ChevronLeft, User, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import { useI18n } from "@/lib/i18n-context";
+import { useSession, signOut } from "next-auth/react";
+import { useState, useRef, useEffect } from "react";
 
 interface HeaderProps {
   variant?: "marketing" | "checkout";
@@ -12,6 +14,19 @@ interface HeaderProps {
 
 export function Header({ variant = "marketing" }: HeaderProps) {
   const { t } = useI18n();
+  const { data: session } = useSession();
+  const [menuOpen, setMenuOpen] = useState(false);
+  const menuRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    function handleClick(e: MouseEvent) {
+      if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
+        setMenuOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClick);
+    return () => document.removeEventListener("mousedown", handleClick);
+  }, []);
 
   if (variant === "checkout") {
     return (
@@ -26,7 +41,14 @@ export function Header({ variant = "marketing" }: HeaderProps) {
               <span className="font-semibold text-sm">{t('header.checkout')}</span>
             </div>
           </div>
-          <LanguageSwitcher />
+          <div className="flex items-center gap-3">
+            {session?.user && (
+              <span className="text-xs text-[var(--muted-foreground)]">
+                {session.user.name}
+              </span>
+            )}
+            <LanguageSwitcher />
+          </div>
         </div>
       </header>
     );
@@ -38,17 +60,58 @@ export function Header({ variant = "marketing" }: HeaderProps) {
         <Link href="/" className="flex items-center gap-2">
           <Leaf className="h-6 w-6 text-[var(--primary)]" />
           <span className="font-semibold text-base text-[var(--foreground)]">
-            Panen Baik
+            Berkala
           </span>
         </Link>
         <div className="flex items-center gap-3">
           <LanguageSwitcher />
-          <Link
-            href="/admin"
-            className="text-xs text-[var(--muted-foreground)] hover:text-[var(--foreground)] transition-colors"
-          >
-            {t('header.admin')}
-          </Link>
+          {session?.user ? (
+            <div className="relative" ref={menuRef}>
+              <button
+                onClick={() => setMenuOpen(!menuOpen)}
+                className="flex items-center gap-2 text-xs text-[var(--muted-foreground)] hover:text-[var(--foreground)] transition-colors"
+              >
+                {session.user.image ? (
+                  <img
+                    src={session.user.image}
+                    alt=""
+                    className="w-6 h-6 rounded-full"
+                  />
+                ) : (
+                  <div className="w-6 h-6 rounded-full bg-[var(--color-emerald-100)] flex items-center justify-center">
+                    <User className="h-3.5 w-3.5 text-[var(--primary)]" />
+                  </div>
+                )}
+                <span className="hidden sm:inline">{session.user.name}</span>
+              </button>
+              {menuOpen && (
+                <div className="absolute right-0 mt-2 w-40 bg-white rounded-xl border border-[var(--border)] shadow-lg py-1 z-50">
+                  <Link
+                    href="/account"
+                    className="flex items-center gap-2 px-3 py-2 text-xs hover:bg-[var(--color-stone-50)] transition-colors"
+                    onClick={() => setMenuOpen(false)}
+                  >
+                    <User className="h-3.5 w-3.5" />
+                    {t("account.title")}
+                  </Link>
+                  <button
+                    onClick={() => signOut({ callbackUrl: "/" })}
+                    className="flex items-center gap-2 px-3 py-2 text-xs hover:bg-[var(--color-stone-50)] transition-colors w-full text-left text-red-600"
+                  >
+                    <LogOut className="h-3.5 w-3.5" />
+                    {t("auth.logout")}
+                  </button>
+                </div>
+              )}
+            </div>
+          ) : (
+            <Link
+              href="/login"
+              className="text-xs text-[var(--muted-foreground)] hover:text-[var(--foreground)] transition-colors"
+            >
+              {t("auth.login")}
+            </Link>
+          )}
           <Link href="/products">
             <Button size="sm" className="rounded-full text-xs px-4">
               {t('header.orderNow')}
