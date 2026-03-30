@@ -1,17 +1,18 @@
 import { NextRequest, NextResponse } from "next/server";
 import { jwtVerify } from "jose";
+import { getToken } from "next-auth/jwt";
 
 const JWT_SECRET = process.env.JWT_SECRET || "";
 
 export async function middleware(request: NextRequest) {
-  // Only protect admin routes
-  if (request.nextUrl.pathname.startsWith("/admin")) {
-    // Allow login page without authentication
-    if (request.nextUrl.pathname === "/admin/login") {
+  const { pathname } = request.nextUrl;
+
+  // Admin routes — existing JWT/jose logic
+  if (pathname.startsWith("/admin")) {
+    if (pathname === "/admin/login") {
       return NextResponse.next();
     }
 
-    // Check for JWT in httpOnly cookie
     const token = request.cookies.get("adminAuth")?.value;
 
     if (!token) {
@@ -19,22 +20,31 @@ export async function middleware(request: NextRequest) {
     }
 
     try {
-      // Verify JWT
       const secret = new TextEncoder().encode(JWT_SECRET);
       await jwtVerify(token, secret);
-
-      // Token is valid, allow request to proceed
       return NextResponse.next();
     } catch (error) {
-      // Token is invalid, redirect to login
       console.warn("Invalid admin token:", error);
       return NextResponse.redirect(new URL("/admin/login", request.url));
     }
+  }
+
+  // Account routes — NextAuth session check
+  if (pathname.startsWith("/account")) {
+    const token = await getToken({ req: request });
+
+    if (!token) {
+      const loginUrl = new URL("/login", request.url);
+      loginUrl.searchParams.set("callbackUrl", pathname);
+      return NextResponse.redirect(loginUrl);
+    }
+
+    return NextResponse.next();
   }
 
   return NextResponse.next();
 }
 
 export const config = {
-  matcher: ["/admin/:path*"],
+  matcher: ["/admin/:path*", "/account/:path*"],
 };
