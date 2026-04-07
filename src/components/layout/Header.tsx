@@ -78,7 +78,7 @@ export function Header({ variant = "marketing" }: HeaderProps) {
                     className="w-6 h-6 rounded-full"
                   />
                 ) : (
-                  <div className="w-6 h-6 rounded-full bg-[var(--color-emerald-100)] flex items-center justify-center">
+                  <div className="w-6 h-6 rounded-full bg-[var(--color-blue-100)] flex items-center justify-center">
                     <User className="h-3.5 w-3.5 text-[var(--primary)]" />
                   </div>
                 )}
