@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.1.1.0] - 2026-04-07
+
+### Added
+- **ProBallFootball design theme** — navy + electric blue color palette replacing emerald/green; matches client branding exactly (`#1A529F` primary, `#3291F4` accent, `#080E1D` deep navy)
+- **Dark hero section** — homepage hero now uses deep navy background with white headline and bright blue accent span
+- **Onest typeface** — replaced Inter + DM Serif Display with single Onest font family (weights 300/400/500/700)
+- **Vitest + Testing Library** — bootstrapped test framework; 4 initial tests for `cn()` utility
+
+### Changed
+- **Border radius** — reduced from 12px to 8px throughout (matches proball's 8-9px style)
+- **CSS variable namespace** — `--color-emerald-*` renamed to `--color-blue-*`; all component references updated
+- **Heading style** — `.heading-display` now uses bold weight Onest instead of serif font
+
 ## [0.1.0.0] - 2026-03-30
 
 ### Added
