@@ -4,15 +4,15 @@
 @custom-variant dark (&:is(.dark *));
 
 :root {
-  /* Premium DTC color palette — earthy, natural, warm */
-  --color-emerald-50: #ecfdf5;
-  --color-emerald-100: #d1fae5;
-  --color-emerald-200: #a7f3d0;
-  --color-emerald-500: #10b981;
-  --color-emerald-600: #059669;
-  --color-emerald-700: #047857;
-  --color-emerald-800: #065f46;
-  --color-emerald-900: #064e3b;
+  /* ProBallFootball brand palette — navy, electric blue, sports-premium */
+  --color-blue-50: #EFF6FF;
+  --color-blue-100: #DBEAFE;
+  --color-blue-200: #BFDBFE;
+  --color-blue-500: #3291F4;
+  --color-blue-600: #2563EB;
+  --color-blue-700: #1A529F;
+  --color-blue-800: #1E3A8A;
+  --color-blue-900: #080E1D;
 
   --color-stone-50: #fafaf9;
   --color-stone-100: #f5f5f4;
@@ -29,33 +29,33 @@
   --foreground: var(--color-stone-900);
   --card: #ffffff;
   --card-foreground: var(--color-stone-900);
-  --primary: var(--color-emerald-700);
+  --primary: var(--color-blue-700);
   --primary-foreground: #ffffff;
   --secondary: var(--color-stone-100);
   --secondary-foreground: var(--color-stone-900);
   --muted: var(--color-stone-100);
   --muted-foreground: var(--color-stone-500);
-  --accent: var(--color-emerald-50);
-  --accent-foreground: var(--color-emerald-900);
+  --accent: var(--color-blue-50);
+  --accent-foreground: var(--color-blue-800);
   --destructive: #ef4444;
   --destructive-foreground: #ffffff;
   --border: var(--color-stone-200);
   --input: var(--color-stone-200);
-  --ring: var(--color-emerald-500);
-  --radius: 0.75rem;
+  --ring: var(--color-blue-500);
+  --radius: 0.5rem;
 
   /* Sidebar */
   --sidebar: #ffffff;
   --sidebar-foreground: var(--color-stone-700);
-  --sidebar-primary: var(--color-emerald-700);
+  --sidebar-primary: var(--color-blue-700);
   --sidebar-primary-foreground: #ffffff;
-  --sidebar-accent: var(--color-emerald-50);
-  --sidebar-accent-foreground: var(--color-emerald-900);
+  --sidebar-accent: var(--color-blue-50);
+  --sidebar-accent-foreground: var(--color-blue-800);
   --sidebar-border: var(--color-stone-200);
-  --sidebar-ring: var(--color-emerald-500);
+  --sidebar-ring: var(--color-blue-500);
 
   /* Chart */
-  --chart-1: var(--color-emerald-500);
+  --chart-1: var(--color-blue-500);
   --chart-2: #f59e0b;
   --chart-3: #6366f1;
   --chart-4: #ec4899;
@@ -97,8 +97,7 @@
   --color-chart-3: var(--chart-3);
   --color-chart-4: var(--chart-4);
   --color-chart-5: var(--chart-5);
-  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
-  --font-serif: "DM Serif Display", ui-serif, Georgia, serif;
+  --font-sans: "Onest", ui-sans-serif, system-ui, sans-serif;
 }
 
 /* ─── Global Styles ─────────────────────────────────────────────────────────── */
@@ -118,8 +117,8 @@ body {
 /* ─── Premium Typography ────────────────────────────────────────────────────── */
 
 .heading-display {
-  font-family: var(--font-serif);
-  font-weight: 400;
+  font-family: var(--font-sans);
+  font-weight: 700;
   letter-spacing: -0.02em;
   line-height: 1.15;
 }
@@ -217,7 +216,7 @@ body {
 }
 
 .skeleton {
-  background: linear-gradient(90deg, var(--color-stone-100) 25%, var(--color-stone-200) 50%, var(--color-stone-100) 75%);
+  background: linear-gradient(90deg, var(--color-blue-50) 25%, var(--color-blue-100) 50%, var(--color-blue-50) 75%);
   background-size: 200% 100%;
   animation: shimmer 1.5s infinite;
   border-radius: var(--radius);

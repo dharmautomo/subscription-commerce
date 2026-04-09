@@ -28,8 +28,10 @@ export default function AdminLoginPage() {
       });
 
       if (res.ok) {
-        // Full page navigation to ensure the httpOnly cookie is sent with the request
-        window.location.href = '/admin';
+        // JWT is set in httpOnly cookie by the API
+        localStorage.setItem("adminAuth", "true");
+        localStorage.setItem("adminUsername", username);
+        router.push('/admin');
       } else {
         setError('Invalid username or password');
         setPassword('');

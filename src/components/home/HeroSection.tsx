@@ -9,19 +9,18 @@ export function HeroSection() {
   const { t } = useI18n();
 
   return (
-    <section className="relative overflow-hidden">
-      <div className="absolute inset-0 bg-gradient-to-br from-[var(--color-emerald-50)] via-white to-[var(--color-emerald-100)]" />
+    <section className="relative overflow-hidden bg-[var(--color-blue-900)]">
       <div className="relative max-w-6xl mx-auto px-5 pt-12 pb-16 md:pt-20 md:pb-24">
         <div className="max-w-xl">
-          <div className="heading-label text-[var(--primary)] mb-3">
+          <div className="heading-label text-[var(--color-blue-200)] mb-3">
             {t('hero.label')}
           </div>
-          <h1 className="heading-display text-4xl md:text-5xl lg:text-6xl text-[var(--foreground)] mb-4">
+          <h1 className="heading-display text-4xl md:text-5xl lg:text-6xl text-white mb-4">
             {t('hero.headline1')}
             <br />
-            <span className="text-[var(--primary)]">{t('hero.headline2')}</span>
+            <span className="text-[var(--color-blue-500)]">{t('hero.headline2')}</span>
           </h1>
-          <p className="text-base md:text-lg text-[var(--muted-foreground)] mb-8 leading-relaxed max-w-md">
+          <p className="text-base md:text-lg text-[var(--color-blue-200)] mb-8 leading-relaxed max-w-md">
             {t('hero.body')}
           </p>
           <div className="flex flex-col sm:flex-row gap-3">
@@ -38,7 +37,7 @@ export function HeroSection() {
               <Button
                 variant="outline"
                 size="lg"
-                className="w-full sm:w-auto rounded-full text-sm px-8 h-12 font-medium"
+                className="w-full sm:w-auto rounded-full text-sm px-8 h-12 font-medium border-white/30 text-white hover:bg-white/10 hover:text-white"
               >
                 {t('hero.learnMore')}
               </Button>
