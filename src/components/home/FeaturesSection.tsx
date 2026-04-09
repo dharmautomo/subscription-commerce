@@ -62,7 +62,7 @@ export function HowItWorks() {
             },
           ].map((item) => (
             <div key={item.step} className="text-center md:text-left">
-              <div className="text-3xl font-bold text-[var(--color-emerald-200)] mb-3">
+              <div className="text-3xl font-bold text-[var(--color-blue-200)] mb-3">
                 {item.step}
               </div>
               <h3 className="font-semibold text-base mb-2">{t(item.titleKey)}</h3>
@@ -117,7 +117,7 @@ export function OrderTypes() {
             {t('orderTypes.recommended')}
           </div>
           <h3 className="font-semibold text-lg mb-3 flex items-center gap-2 break-words">
-            <div className="w-8 h-8 shrink-0 rounded-full bg-[var(--color-emerald-50)] flex items-center justify-center">
+            <div className="w-8 h-8 shrink-0 rounded-full bg-[var(--color-blue-50)] flex items-center justify-center">
               <RefreshCw className="h-4 w-4 text-[var(--primary)]" />
             </div>
             <span>{t('orderTypes.subscriptionTitle')}</span>
@@ -148,10 +148,10 @@ export function PaymentTrust() {
   const { t } = useI18n();
 
   return (
-    <section className="bg-[var(--color-emerald-900)] text-white">
+    <section className="bg-[var(--color-blue-900)] text-white">
       <div className="max-w-6xl mx-auto px-5 py-14 md:py-20">
         <div className="text-center mb-10">
-          <div className="text-[10px] font-semibold tracking-[0.15em] uppercase text-[var(--color-emerald-200)] mb-2">
+          <div className="text-[10px] font-semibold tracking-[0.15em] uppercase text-[var(--color-blue-200)] mb-2">
             {t('paymentTrust.label')}
           </div>
           <h2 className="heading-display text-2xl md:text-3xl text-white">
@@ -179,17 +179,17 @@ export function PaymentTrust() {
           ].map((method) => (
             <div key={method.titleKey} className="text-center">
               <div className="w-12 h-12 mx-auto rounded-xl bg-white/10 flex items-center justify-center mb-3">
-                <Shield className="h-5 w-5 text-[var(--color-emerald-200)]" />
+                <Shield className="h-5 w-5 text-[var(--color-blue-200)]" />
               </div>
               <div className="font-medium text-sm mb-0.5">{t(method.titleKey)}</div>
-              <div className="text-xs text-[var(--color-emerald-200)] opacity-80">
+              <div className="text-xs text-[var(--color-blue-200)] opacity-80">
                 {t(method.descKey)}
               </div>
             </div>
           ))}
         </div>
         <div className="text-center mt-10">
-          <p className="text-xs text-[var(--color-emerald-200)] opacity-70 max-w-md mx-auto">
+          <p className="text-xs text-[var(--color-blue-200)] opacity-70 max-w-md mx-auto">
             {t('paymentTrust.note')}
           </p>
         </div>
