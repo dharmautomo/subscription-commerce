@@ -2,7 +2,8 @@
 
 import { Suspense, useEffect, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { Leaf, LogIn, AlertCircle, Loader2 } from 'lucide-react';
+import Image from 'next/image';
+import { LogIn, AlertCircle, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -64,12 +65,12 @@ function AdminLoginForm() {
   if (redirecting) return null;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[var(--color-emerald-50)] via-white to-[var(--color-emerald-100)] flex items-center justify-center p-5">
+    <div className="min-h-screen bg-gradient-to-br from-[var(--color-blue-50)] via-white to-[var(--color-blue-100)] flex items-center justify-center p-5">
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
           <div className="flex items-center justify-center gap-2 mb-4">
-            <Leaf className="h-6 w-6 text-[var(--primary)]" />
-            <span className="font-bold text-xl">Berkala</span>
+            <Image src="/proball-logo.png" alt="ProBall Football" width={32} height={32} className="rounded" />
+            <span className="font-bold text-xl">ProBall Football</span>
           </div>
           <h1 className="text-2xl font-bold text-[var(--foreground)] mb-2">Admin Login</h1>
           <p className="text-sm text-[var(--muted-foreground)]">
@@ -131,7 +132,7 @@ function AdminLoginForm() {
         </Card>
 
         <p className="text-center text-xs text-[var(--muted-foreground)] mt-6">
-          © 2024 Berkala. Admin Panel.
+          © 2024 ProBall Football. Admin Panel.
         </p>
       </div>
     </div>
@@ -142,7 +143,7 @@ export default function AdminLoginPage() {
   return (
     <Suspense
       fallback={
-        <div className="min-h-screen bg-gradient-to-br from-[var(--color-emerald-50)] via-white to-[var(--color-emerald-100)] flex items-center justify-center">
+        <div className="min-h-screen bg-gradient-to-br from-[var(--color-blue-50)] via-white to-[var(--color-blue-100)] flex items-center justify-center">
           <Loader2 className="h-6 w-6 animate-spin text-[var(--primary)]" />
         </div>
       }

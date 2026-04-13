@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.2.2.0] - 2026-04-13
+
+### Added
+- **ProBall Football admin branding** — admin sidebar, login page, and dashboard now show the ProBall Football logo and name instead of Berkala/Leaf icon; active nav state uses blue instead of emerald
+- **Products page ProBall branding** — checkout header and product card placeholder updated to use ProBall Football logo with blue color palette
+- **Trust bar icon update** — homepage trust bar icons updated to Trophy, Users, GraduationCap, Shield to match ProBall Football content
+
+### Fixed
+- **Admin pages API error handling** — emails, users, orders, frequencies, and pricing pages now gracefully handle API failures when `DATABASE_URL` is not configured, preventing runtime crashes
+
 ## [0.2.1.1] - 2026-04-12
 
 ### Fixed

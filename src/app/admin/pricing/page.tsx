@@ -37,9 +37,10 @@ export default function PricingPage() {
     fetch("/api/pricing")
       .then((r) => r.json())
       .then((data) => {
-        setConfigs(data);
+        setConfigs(Array.isArray(data) ? data : []);
         setLoading(false);
-      });
+      })
+      .catch(() => setLoading(false));
   }, []);
 
   const updateEdit = (id: string, field: string, value: string | number | boolean | null) => {
