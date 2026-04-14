@@ -1,9 +1,8 @@
 'use client';
 
-import { Suspense, useEffect, useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import Image from 'next/image';
-import { LogIn, AlertCircle, Loader2 } from 'lucide-react';
+import { Leaf, LogIn, AlertCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -12,11 +11,11 @@ import { Card, CardContent } from '@/components/ui/card';
 function AdminLoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const isExpired = searchParams.get('expired') === '1';
+  const isExpired = searchParams.get("expired") === "1";
 
-  // Synchronously initialize, avoids flash if already authenticated
+  // Synchronously initialize — avoids flash if already authenticated
   const [redirecting, setRedirecting] = useState(
-    () => !isExpired && typeof window !== 'undefined' && localStorage.getItem('adminAuth') === 'true'
+    () => !isExpired && typeof window !== 'undefined' && localStorage.getItem("adminAuth") === "true"
   );
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
@@ -26,13 +25,13 @@ function AdminLoginForm() {
   useEffect(() => {
     // Clear stale localStorage when redirected back due to expired/invalid session
     if (isExpired) {
-      localStorage.removeItem('adminAuth');
-      localStorage.removeItem('adminUsername');
+      localStorage.removeItem("adminAuth");
+      localStorage.removeItem("adminUsername");
       return;
     }
-    if (localStorage.getItem('adminAuth') === 'true') {
+    if (localStorage.getItem("adminAuth") === "true") {
       setRedirecting(true);
-      router.push('/admin');
+      router.push("/admin");
     }
   }, [router, isExpired]);
 

@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.1.2] - 2026-04-14
+
+### Fixed
+- **Checkout autofill** — logged-in users now see their name and email pre-filled immediately on the checkout details form. Previously, autofill relied solely on the `/api/account/profile` API call; if that call failed or returned empty, the form stayed blank. Now name and email are filled directly from the NextAuth session JWT (always available when logged in), with the API call still used to fill phone number and saved address.
+
+### Changed
+- **Turbopack config** — added `turbopack.root` to `next.config.ts` to prevent workspace root inference errors when the project path contains spaces (Conductor workspace layout).
 ## [0.2.2.0] - 2026-04-14
 
 ### Added
