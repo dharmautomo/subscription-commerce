@@ -33,11 +33,11 @@ export default function UnlockPage() {
     <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: "#0e1e3a" }}>
       <div className="w-full max-w-lg px-6 py-10 flex flex-col items-center gap-6">
         <div className="flex flex-col items-center gap-4">
-          <Image
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
             src="/logo-berkala.png"
             alt="Berkala"
             width={480}
-            height={160}
             className="object-contain"
           />
           <p className="text-neutral-400 text-sm">Masukkan kata sandi untuk melanjutkan</p>
