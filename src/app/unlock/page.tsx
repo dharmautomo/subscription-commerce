@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 
 export default function UnlockPage() {
   const [password, setPassword] = useState("");
@@ -29,11 +30,17 @@ export default function UnlockPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-black">
-      <div className="w-full max-w-sm px-6 py-10 flex flex-col items-center gap-6">
-        <div className="text-center">
-          <h1 className="text-white text-2xl font-bold tracking-tight">ProBall Football</h1>
-          <p className="text-neutral-400 text-sm mt-1">Masukkan kata sandi untuk melanjutkan</p>
+    <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: "#0e1e3a" }}>
+      <div className="w-full max-w-lg px-6 py-10 flex flex-col items-center gap-6">
+        <div className="flex flex-col items-center gap-4">
+          <Image
+            src="/logo-berkala.png"
+            alt="Berkala"
+            width={480}
+            height={160}
+            className="object-contain"
+          />
+          <p className="text-neutral-400 text-sm">Masukkan kata sandi untuk melanjutkan</p>
         </div>
         <form onSubmit={handleSubmit} className="w-full flex flex-col gap-3">
           <input
@@ -42,7 +49,7 @@ export default function UnlockPage() {
             onChange={(e) => setPassword(e.target.value)}
             placeholder="Kata sandi"
             autoFocus
-            className="w-full px-4 py-3 rounded-lg bg-neutral-900 border border-neutral-700 text-white placeholder-neutral-500 focus:outline-none focus:border-neutral-400"
+            className="w-full px-4 py-3 rounded-lg text-white placeholder-neutral-400 focus:outline-none focus:border-white" style={{ backgroundColor: "#162d52", border: "1px solid #2a4470" }}
           />
           {error && (
             <p className="text-red-400 text-sm text-center">Kata sandi salah.</p>
