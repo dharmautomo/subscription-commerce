@@ -9,12 +9,13 @@ export async function middleware(request: NextRequest) {
 
   // Site-wide password gate (only active when SITE_PASSWORD env var is set)
   if (process.env.SITE_PASSWORD) {
+    const isStaticFile = /\.(?:png|jpg|jpeg|gif|svg|ico|webp|woff2?|ttf|eot|css|js|map)$/i.test(pathname);
     const isExcluded =
+      isStaticFile ||
       pathname.startsWith("/unlock") ||
       pathname.startsWith("/api/unlock") ||
       pathname.startsWith("/admin") ||
-      pathname.startsWith("/_next") ||
-      pathname === "/favicon.ico";
+      pathname.startsWith("/_next");
 
     if (!isExcluded) {
       const siteAccess = request.cookies.get("siteAccess")?.value;
