@@ -1,10 +1,5 @@
 # Changelog
 
-## [0.2.1.2] - 2026-04-14
-
-### Fixed
-- **Inactive products now hidden from customer flow** — toggling a product off in the admin pricing dashboard now correctly hides it from the customer-facing product list, homepage, and checkout. Previously, the "Active" toggle only updated `PriceConfig.active` but the customer API filtered on `Product.active`, so deactivated products remained visible.
-
 ## [0.2.1.1] - 2026-04-12
 
 ### Fixed
