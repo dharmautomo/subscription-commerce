@@ -42,6 +42,11 @@ export default function AdminLayout({
     router.push("/admin/login");
   };
 
+  // Skip admin layout for login page
+  if (pathname === "/admin/login") {
+    return <>{children}</>;
+  }
+
   return (
     <div className="min-h-screen bg-[var(--color-stone-50)]">
       {/* Mobile header */}
