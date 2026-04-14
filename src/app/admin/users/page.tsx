@@ -106,9 +106,10 @@ export default function UsersPage() {
     fetch("/api/admin/users")
       .then((r) => r.json())
       .then((data) => {
-        setUsers(data);
+        setUsers(Array.isArray(data) ? data : []);
         setLoading(false);
-      });
+      })
+      .catch(() => setLoading(false));
   }, []);
 
   const filtered = users.filter((user) => {
