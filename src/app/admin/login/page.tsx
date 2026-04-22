@@ -1,9 +1,8 @@
 'use client';
 
-import Image from 'next/image';
-import { Suspense, useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { LogIn, AlertCircle, Loader2 } from 'lucide-react';
+import { Leaf, LogIn, AlertCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
